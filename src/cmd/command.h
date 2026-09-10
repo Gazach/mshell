@@ -16,5 +16,7 @@ void cmd_blank(char *args);
 void cmd_mkdir(char *args);
 void cmd_rm(char *args);
 void cmd_rmdir(char *args);
+void cmd_pcd(char *args);
+
 
 #endif // COMMAND_H

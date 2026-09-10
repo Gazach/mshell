@@ -69,7 +69,9 @@ void runcmd(char *input) {
                (input[2] == ' ' || input[2] == '\0')) {
     
         printf("NOT IMPLEMENTED YET\n");
+    } else if (strcmp(input, "pcd") == 0) {
     
+        cmd_pcd(NULL);
     
     //Other
     } else if (input[0] == '\0') {
