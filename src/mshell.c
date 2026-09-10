@@ -25,7 +25,7 @@ void runcmd(char *input) {
     } else if (strncmp(input, "cd", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){ // changes directory
         cmd_cd(input + 2);
     } else if (strncmp(input, "ls", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){ // list file and directory
-        printf("NOT IMPLEMENTED\n");
+        cmd_ls(input + 2);
     // Etc.
     } else if (input[0] == '\0'){
         // do nothing
