@@ -4,6 +4,7 @@
 // Shell header
 #include "mver.h"
 #include "mode.h"
+#include "cmd/command.h"
 
 int  isRunning = 1; // Flag to check shell running.
 
@@ -11,15 +12,20 @@ void runcmd(char *input) {
     while (*input == ' ') input ++;
     
     // Primary Command
-    if (strncmp(input, "echo", 4) == 0 && (input[4] == ' ' || input[4] == '\0')){
+    if (strncmp(input, "echo", 4) == 0 && (input[4] == ' ' || input[4] == '\0')){ 
         char *arg = input + 4;
         while (*arg == ' ') arg++;
         printf("%s\n", arg);
+        
     } else if (strcmp(input, "exit") == 0){
         printf("Exit...\n");
         isRunning = 0;
+        
     // File and Directory
-    
+    } else if (strncmp(input, "cd", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){ // changes directory
+        cmd_cd(input + 2);
+    } else if (strncmp(input, "ls", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){ // list file and directory
+        printf("NOT IMPLEMENTED\n");
     // Etc.
     } else if (input[0] == '\0'){
         // do nothing
@@ -28,10 +34,26 @@ void runcmd(char *input) {
     }
 }
 
-void printPrompt(void){
+void printPrompt(void) {
     char cwd[MAX_PATH];
     GetCurrentDirectoryA(sizeof(cwd), cwd);
-    printf("$MShell %s> ", cwd);
+
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    //lime
+    SetConsoleTextAttribute(console, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+    printf("$MShell ");
+
+    //cyan
+    SetConsoleTextAttribute(console, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+    printf("%s", cwd);
+
+    // > -> white
+    SetConsoleTextAttribute(console, FOREGROUND_RED |
+                                     FOREGROUND_GREEN |
+                                     FOREGROUND_BLUE);
+    printf("> ");
+
     fflush(stdout);
 }
 
@@ -91,7 +113,6 @@ int main(int argc, char *argv[]){
             return 1;
         }
     }
-    
     
     // running shell
     runPrompt();

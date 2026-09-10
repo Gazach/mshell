@@ -3,6 +3,8 @@
 1. Make a Directory Label.
 2. Make a "CD" command.
 3. passing the recognizeable command to a normal cmdprmt.
+4. make a "touch" command to make a file.
+4. make a "ls" command to list file and folder.
 
 ## To do list (1)
 
