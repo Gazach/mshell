@@ -1,3 +1,9 @@
+## To do list (2)
+
+1. Make a Directory Label.
+2. Make a "CD" command.
+3. passing the recognizeable command to a normal cmdprmt.
+
 ## To do list (1)
 
 1. Make a loop for terminal
