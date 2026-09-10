@@ -44,11 +44,6 @@ if errorlevel 1 (
     goto end
 )
 
-echo [run] Running mshell.exe...
-cd /d "%ROOT_DIR%build\%1"
-
-mshell.exe
-
 :end
 endlocal
 pause

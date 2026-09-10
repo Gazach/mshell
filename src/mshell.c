@@ -2,6 +2,7 @@
 #include <string.h>
 
 // Shell header
+#include "mver.h"
 #include "mode.h"
 
 int  isRunning = 1; // Flag to check shell running.
@@ -17,6 +18,9 @@ void runcmd(char *input) {
     } else if (strcmp(input, "exit") == 0){
         printf("Exit...\n");
         isRunning = 0;
+    // File and Directory
+    
+    // Etc.
     } else if (input[0] == '\0'){
         // do nothing
     } else {
@@ -24,16 +28,24 @@ void runcmd(char *input) {
     }
 }
 
+void printPrompt(void){
+    char cwd[MAX_PATH];
+    GetCurrentDirectoryA(sizeof(cwd), cwd);
+    printf("$MShell %s> ", cwd);
+    fflush(stdout);
+}
+
 void runPrompt(void){
     enableRawMode();
+    
+    PrintVer();
     
     HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
     
     char input[1024]; // User Type input
     size_t len = 0;
     
-    printf("mShell :> ");
-    fflush(stdout);
+    printPrompt();
     
     INPUT_RECORD ir;
     DWORD read;
@@ -53,8 +65,7 @@ void runPrompt(void){
             if (!isRunning) break;
             
             len = 0;
-            printf("mShell :> ");
-            fflush(stdout);
+            printPrompt();
             
         } else if ( c == '\b') {  //backspace
             if (len > 0){
@@ -70,7 +81,18 @@ void runPrompt(void){
     }
 }
 
-int main(){
+int main(int argc, char *argv[]){
+    if (argc < 2){
+        SetCurrentDirectoryA("C:\\");
+    } else if (strcmp(argv[1], ".") == 0) {// pass nothing
+    } else {
+        if (!SetCurrentDirectoryA(argv[1])){
+            fprintf(stderr, "Moon Shell cannot find path (%s)", argv[1]);
+            return 1;
+        }
+    }
+    
+    
     // running shell
     runPrompt();
     
