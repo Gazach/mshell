@@ -12,5 +12,7 @@
 // File and directory.
 void cmd_cd(char *args);
 void cmd_ls(char *args);
+void cmd_blank(char *args);
+void cmd_mkdir(char *args);
 
 #endif // COMMAND_H

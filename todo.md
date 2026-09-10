@@ -2,7 +2,7 @@
 
 1. Make basic feature :
 - blank (make a new blank file)
-- mdir (make directory)
+- mkdir (make directory)
 - pcd (print current/working directory)
 - rmdir (remove directory)
 - rm (remove file)

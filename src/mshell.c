@@ -11,49 +11,77 @@ int  isRunning = 1; // Flag to check shell running.
 void runcmd(char *input) {
     while (*input == ' ') input ++;
     
-    // Primary Command
-    if (strncmp(input, "echo", 4) == 0 && (input[4] == ' ' || input[4] == '\0')){ 
+    //Primary Commands
+    
+    if (strncmp(input, "echo", 4) == 0 &&
+        (input[4] == ' ' || input[4] == '\0')) {
+    
         char *arg = input + 4;
-        while (*arg == ' ') arg++;
+    
+        while (*arg == ' ')
+            arg++;
+    
         printf("%s\n", arg);
-        
-    } else if (strcmp(input, "exit") == 0){
+    
+    } else if (strcmp(input, "exit") == 0) {
+    
         printf("Exit...\n");
         isRunning = 0;
-        
-    // File and Directory
-    } else if (strncmp(input, "cd", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){ // changes directory
-        cmd_cd(input + 2);
-        
-    } else if (strncmp(input, "ls", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){ // list file and directory
-        cmd_ls(input + 2);
-        
-     } else if (strncmp(input, "blank", 5) == 0 && (input[5] == ' ' || input[5] == '\0')){
-         printf("NOT IMPLEMENTED YET");    
-         
-     } else if (strncmp(input, "mkdir", 5) == 0 && (input[5] == ' ' || input[5] == '\0')){
-         printf("NOT IMPLEMENTED YET");    
-         
-     } else if (strncmp(input, "rmdir", 5) == 0 && (input[5] == ' ' || input[5] == '\0')){
-         printf("NOT IMPLEMENTED YET");    
-         
-     } else if (strncmp(input, "rm", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){
-         printf("NOT IMPLEMENTED YET");    
-         
-     }  else if (strncmp(input, "mv", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){
-         printf("NOT IMPLEMENTED YET");    
-         
-     } else if (strncmp(input, "cp", 2) == 0 && (input[2] == ' ' || input[2] == '\0')){
-         printf("NOT IMPLEMENTED YET");    
-         
-     }
     
-    // Etc.
-    } else if (input[0] == '\0'){
-        // do nothing
+    //File/dir Commands
+    
+    } else if (strncmp(input, "cd", 2) == 0 &&
+               (input[2] == ' ' || input[2] == '\0')) {
+    
+        cmd_cd(input + 2);
+    
+    } else if (strncmp(input, "ls", 2) == 0 &&
+               (input[2] == ' ' || input[2] == '\0')) {
+    
+        cmd_ls(input + 2);
+    
+    } else if (strncmp(input, "blank", 5) == 0 &&
+               (input[5] == ' ' || input[5] == '\0')) {
+    
+        cmd_blank(input + 5);
+    
+    } else if (strncmp(input, "mkdir", 5) == 0 &&
+               (input[5] == ' ' || input[5] == '\0')) {
+    
+        cmd_mkdir(input + 5);
+    
+    } else if (strncmp(input, "rmdir", 5) == 0 &&
+               (input[5] == ' ' || input[5] == '\0')) {
+    
+        printf("NOT IMPLEMENTED YET\n");
+    
+    } else if (strncmp(input, "rm", 2) == 0 &&
+               (input[2] == ' ' || input[2] == '\0')) {
+    
+        printf("NOT IMPLEMENTED YET\n");
+    
+    } else if (strncmp(input, "mv", 2) == 0 &&
+               (input[2] == ' ' || input[2] == '\0')) {
+    
+        printf("NOT IMPLEMENTED YET\n");
+    
+    } else if (strncmp(input, "cp", 2) == 0 &&
+               (input[2] == ' ' || input[2] == '\0')) {
+    
+        printf("NOT IMPLEMENTED YET\n");
+    
+    
+    //Other
+    
+    } else if (input[0] == '\0') {
+    
+        // Do nothing
+    
     } else {
+    
         printf("Unknown Command! : %s\n", input);
     }
+
 }
 
 void printPrompt(void) {
