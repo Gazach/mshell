@@ -2,9 +2,13 @@
 
 1. Make basic feature :
 - blank (make a new blank file)
-- mkdir (make directory)
-- pwd (print current/working directory)
-
+- mdir (make directory)
+- pcd (print current/working directory)
+- rmdir (remove directory)
+- rm (remove file)
+- mv (move / rename file)
+- cp (copy file)
+ 
 ## To do list (2)
 
 1. Make a Directory Label.
