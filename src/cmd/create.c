@@ -66,6 +66,7 @@ void cmd_mkdir(char *args){
         } else {
             printf("mkdir: '%s' cannot be create!.\n", args);
         }
+        return;
     }
     
 }

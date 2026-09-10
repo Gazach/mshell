@@ -53,12 +53,12 @@ void runcmd(char *input) {
     } else if (strncmp(input, "rmdir", 5) == 0 &&
                (input[5] == ' ' || input[5] == '\0')) {
     
-        printf("NOT IMPLEMENTED YET\n");
+        cmd_rmdir(input + 5);
     
     } else if (strncmp(input, "rm", 2) == 0 &&
                (input[2] == ' ' || input[2] == '\0')) {
     
-        printf("NOT IMPLEMENTED YET\n");
+        cmd_rm(input + 2);
     
     } else if (strncmp(input, "mv", 2) == 0 &&
                (input[2] == ' ' || input[2] == '\0')) {
@@ -72,7 +72,6 @@ void runcmd(char *input) {
     
     
     //Other
-    
     } else if (input[0] == '\0') {
     
         // Do nothing

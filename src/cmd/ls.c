@@ -1,7 +1,5 @@
 #include "command.h"
 
-#define MAX_ENTRIES 1024
-
 typedef struct {
     char name[MAX_PATH];
     int isDir;
