@@ -1,3 +1,0 @@
-C:/Gaza/Code/mshell/build/release/CMakeFiles/mshell.dir
-C:/Gaza/Code/mshell/build/release/CMakeFiles/edit_cache.dir
-C:/Gaza/Code/mshell/build/release/CMakeFiles/rebuild_cache.dir
