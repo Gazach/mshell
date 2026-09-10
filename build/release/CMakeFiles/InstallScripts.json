@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Gaza/Code/mshell/build/release/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
