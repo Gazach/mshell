@@ -18,15 +18,16 @@ void runcmd(char *input) {
         return;
     }
 
-    //Primary Commands
+    // Basic
 
     if (strcmp(argv[0], "echo") == 0) {
 
-        for (int i = 1; i < argc; i++) {
-            printf("%s%s", argv[i], (i < argc - 1) ? " " : "");
-        }
-        printf("\n");
-
+        cmd_echo(argc, argv);
+        
+    } else if (strcmp(argv[0], "date") == 0) {
+        
+        cmd_date(argc, argv);
+        
     } else if (strcmp(argv[0], "exit") == 0) {
 
         printf("Exit...\n");
@@ -70,9 +71,8 @@ void runcmd(char *input) {
 
         cmd_pcd(argc, argv);
 
-    //Other
+    // if command not found.
     } else {
-
         printf("Unknown Command! : %s\n", argv[0]);
     }
 
