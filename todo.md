@@ -1,5 +1,10 @@
 ## To do list (3)
 
+1. make a moveable cursor.
+2. make a command history.
+
+## To do list (3)
+
 1. Make basic feature :
 - blank (make a new blank file)
 - mkdir (make directory)

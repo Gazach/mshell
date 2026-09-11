@@ -64,7 +64,7 @@ void runcmd(char *input) {
 
     } else if (strcmp(argv[0], "cp") == 0) {
 
-        printf("NOT IMPLEMENTED YET\n");
+         cmd_cp(argc, argv);
 
     } else if (strcmp(argv[0], "pcd") == 0) {
 

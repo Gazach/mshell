@@ -18,5 +18,6 @@ void cmd_rm(int argc, char *argv[]);
 void cmd_rmdir(int argc, char *argv[]);
 void cmd_pcd(int argc, char *argv[]);
 void cmd_mv(int argc, char *argv[]);
+void cmd_cp(int argc, char *argv[]);
 
 #endif // COMMAND_H
