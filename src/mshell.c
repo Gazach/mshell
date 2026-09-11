@@ -148,6 +148,10 @@ void runPrompt(void){
 }
 
 int main(int argc, char *argv[]){
+    // Title
+    printf("\033]0;Moon Shell\007");
+    fflush(stdout); // Force the terminal to process the buffer immediately
+    
     if (argc < 2){
         SetCurrentDirectoryA("C:\\");
     } else if (strcmp(argv[1], ".") == 0) {// pass nothing
