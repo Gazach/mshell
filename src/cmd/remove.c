@@ -2,62 +2,42 @@
 
 #include "command.h"
 
-void cmd_rm(char *args){
-    // trim leading space
-    while (*args == ' ') args++;
-    
-    if (*args == '\0') {
+void cmd_rm(int argc, char *argv[]) {
+    if (argc < 2) {
         printf("rm: usage [rm <filename>].\n");
         return;
     }
-    
-    // strip tailing new line/whitespace
-    size_t len = strlen(args);
-    while (len > 0 && (args[len - 1] == ' ' || args[len - 1] == '\r')) {
-        args[--len] = '\0';
-    }
-    
-    if (!DeleteFileA(args)){
+
+    if (!DeleteFileA(argv[1])) {
         DWORD err = GetLastError();
-        
-        if (err == ERROR_FILE_NOT_FOUND){
-            printf("rm: '%s' not found!.\n", args);
-        } else if (err == ERROR_ACCESS_DENIED){
-            printf("rm: '%s' is read-only or in use.\n", args);
+
+        if (err == ERROR_FILE_NOT_FOUND) {
+            printf("rm: '%s' not found!.\n", argv[1]);
+        } else if (err == ERROR_ACCESS_DENIED) {
+            printf("rm: '%s' is read-only or in use.\n", argv[1]);
         } else {
-            printf("rm: '%s' cannot be removed!.\n", args);
+            printf("rm: '%s' cannot be removed!.\n", argv[1]);
         }
         return;
     }
-    
 }
 
-// make directory
-void cmd_rmdir(char *args){
-    // trim leading space
-    while (*args == ' ') args++;
-    
-    if (*args == '\0') {
+// remove directory
+void cmd_rmdir(int argc, char *argv[]) {
+    if (argc < 2) {
         printf("rmdir: usage [rmdir <foldername>].\n");
         return;
     }
-    
-    // strip tailing new line/whitespace
-    size_t len = strlen(args);
-    while (len > 0 && (args[len - 1] == ' ' || args[len - 1] == '\r')) {
-        args[--len] = '\0';
-    }
-    
-    if (!RemoveDirectoryA(args)){
+
+    if (!RemoveDirectoryA(argv[1])) {
         DWORD err = GetLastError();
-        if (err == ERROR_DIR_NOT_EMPTY){
-            printf("rmdir: '%s' is not empty!.\n", args);
-        } else if (err == ERROR_PATH_NOT_FOUND || err == ERROR_FILE_NOT_FOUND){
-            printf("rmdir: cannot find '%s'.\n", args);
+        if (err == ERROR_DIR_NOT_EMPTY) {
+            printf("rmdir: '%s' is not empty!.\n", argv[1]);
+        } else if (err == ERROR_PATH_NOT_FOUND || err == ERROR_FILE_NOT_FOUND) {
+            printf("rmdir: cannot find '%s'.\n", argv[1]);
         } else {
-            printf("rmdir: '%s' cannot be removed!.\n", args);
+            printf("rmdir: '%s' cannot be removed!.\n", argv[1]);
         }
         return;
     }
-    
 }

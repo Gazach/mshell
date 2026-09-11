@@ -2,23 +2,14 @@
 
 #include "command.h"
 
-void cmd_blank(char *args){
-    // trim leading space
-    while (*args == ' ') args++;
-    
-    if (*args == '\0') {
+void cmd_blank(int argc, char *argv[]) {
+    if (argc < 2) {
         printf("blank: usage [blank <filename>].\n");
         return;
     }
-    
-    // strip tailing new line/whitespace
-    size_t len = strlen(args);
-    while (len > 0 && (args[len - 1] == ' ' || args[len - 1] == '\r')) {
-        args[--len] = '\0';
-    }
-    
+
     HANDLE hFile = CreateFileA(
-        args,
+        argv[1],
         GENERIC_WRITE,
         0,
         NULL,
@@ -26,47 +17,36 @@ void cmd_blank(char *args){
         FILE_ATTRIBUTE_NORMAL,
         NULL
     );
-    
-    if (hFile == INVALID_HANDLE_VALUE){
+
+    if (hFile == INVALID_HANDLE_VALUE) {
         DWORD err = GetLastError();
-        if (err == ERROR_FILE_EXISTS){
-            printf("blank: '%s' already exist!.\n", args);
+        if (err == ERROR_FILE_EXISTS) {
+            printf("blank: '%s' already exist!.\n", argv[1]);
         } else {
-            printf("blank: '%s' cannot be create!.\n", args);
+            printf("blank: '%s' cannot be create!.\n", argv[1]);
         }
         return;
     }
-    
+
     CloseHandle(hFile);
-    
 }
 
 // make directory
-void cmd_mkdir(char *args){
-    // trim leading space
-    while (*args == ' ') args++;
-    
-    if (*args == '\0') {
+void cmd_mkdir(int argc, char *argv[]) {
+    if (argc < 2) {
         printf("mkdir: usage [mkdir <foldername>].\n");
         return;
     }
-    
-    // strip tailing new line/whitespace
-    size_t len = strlen(args);
-    while (len > 0 && (args[len - 1] == ' ' || args[len - 1] == '\r')) {
-        args[--len] = '\0';
-    }
-    
-    if (!CreateDirectoryA(args, NULL)){
+
+    if (!CreateDirectoryA(argv[1], NULL)) {
         DWORD err = GetLastError();
-        if (err == ERROR_ALREADY_EXISTS){
-            printf("mkdir: '%s' already exist!.\n", args);
-        } else if (err == ERROR_PATH_NOT_FOUND){
-            printf("mkdir: cannot create '%s' : parent directory doesnt exist.\n", args);
+        if (err == ERROR_ALREADY_EXISTS) {
+            printf("mkdir: '%s' already exist!.\n", argv[1]);
+        } else if (err == ERROR_PATH_NOT_FOUND) {
+            printf("mkdir: cannot create '%s' : parent directory doesnt exist.\n", argv[1]);
         } else {
-            printf("mkdir: '%s' cannot be create!.\n", args);
+            printf("mkdir: '%s' cannot be create!.\n", argv[1]);
         }
         return;
     }
-    
 }

@@ -10,13 +10,13 @@
 #define MAX_ENTRIES 1024
 
 // File and directory.
-void cmd_cd(char *args);
-void cmd_ls(char *args);
-void cmd_blank(char *args);
-void cmd_mkdir(char *args);
-void cmd_rm(char *args);
-void cmd_rmdir(char *args);
-void cmd_pcd(char *args);
-
+void cmd_cd(int argc, char *argv[]);
+void cmd_ls(int argc, char *argv[]);
+void cmd_blank(int argc, char *argv[]);
+void cmd_mkdir(int argc, char *argv[]);
+void cmd_rm(int argc, char *argv[]);
+void cmd_rmdir(int argc, char *argv[]);
+void cmd_pcd(int argc, char *argv[]);
+void cmd_mv(int argc, char *argv[]);
 
 #endif // COMMAND_H

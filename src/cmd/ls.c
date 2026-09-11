@@ -5,21 +5,19 @@ typedef struct {
     int isDir;
 } Entry;
 
-void cmd_ls(char *args) {
-    while (*args == ' ') args++;
-
+void cmd_ls(int argc, char *argv[]) {
     char searchPath[MAX_PATH];
-    if (*args == '\0') {
+    if (argc < 2) {
         snprintf(searchPath, sizeof(searchPath), "*");
     } else {
-        snprintf(searchPath, sizeof(searchPath), "%s\\*", args);
+        snprintf(searchPath, sizeof(searchPath), "%s\\*", argv[1]);
     }
 
     WIN32_FIND_DATAA fd;
     HANDLE hFind = FindFirstFileA(searchPath, &fd);
 
     if (hFind == INVALID_HANDLE_VALUE) {
-        printf("ls: cannot access '%s'\n", *args ? args : ".");
+        printf("ls: cannot access '%s'\n", argc < 2 ? "." : argv[1]);
         return;
     }
 
@@ -32,7 +30,7 @@ void cmd_ls(char *args) {
         if (strcmp(fd.cFileName, ".") == 0 || strcmp(fd.cFileName, "..") == 0)
             continue;
         if (count >= MAX_ENTRIES) break;
-        
+
         strncpy(entries[count].name, fd.cFileName, MAX_PATH - 1);
         entries[count].name[MAX_PATH - 1] = '\0';
         entries[count].isDir = (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
@@ -50,7 +48,7 @@ void cmd_ls(char *args) {
     if (GetConsoleScreenBufferInfo(hOut, &csbi)) {
         termWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
     }
-    
+
     int colWidth = (int)maxLen + 2; // +2 for spacing between columns
     int maxCols = termWidth / colWidth;
     if (maxCols < 1) maxCols = 1;
