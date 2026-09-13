@@ -7,8 +7,13 @@
 #include "mode.h"
 #include "tokenize.h"
 #include "history.h"
+#include "suggest.h"
 #include "cmd/command.h"
 
+// Ctrl+<letter> arrives as AsciiChar already reduced to its control code
+// (same trick backspace relies on below: '\b' IS Ctrl+H, 0x08) - masking
+// off the low 5 bits of the letter reproduces that code so we can name
+// the shortcut by its letter instead of a magic number.
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 int  isRunning = 1; // Flag to check shell running.
@@ -45,6 +50,10 @@ void runcmd(char *input) {
     } else if (strcmp(argv[0], "clear") == 0 || strcmp(argv[0], "clr") == 0) {
 
         cmd_clear(argc, argv);
+
+    } else if (strcmp(argv[0], "help") == 0) {
+
+        cmd_help(argc, argv);
 
     //File/dir Commands
 
@@ -90,6 +99,11 @@ void runcmd(char *input) {
         if (argc > 1) {
             printf("  (parsed as command \"%s\" + %d argument%s - full line was: %s)\n",
                    argv[0], argc - 1, (argc - 1 == 1) ? "" : "s", original);
+        }
+
+        char suggestion[SUGGEST_MAX_LEN + 1];
+        if (suggestCommand(argv[0], suggestion, sizeof(suggestion))) {
+            printf("  Did you mean \"%s\"?\n", suggestion);
         }
     }
 

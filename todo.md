@@ -1,9 +1,9 @@
-## To do list (6)
+## To do list (6) DONE
 
 1. Make a interactive help command. which sort every command by category (help)
 2. kinda smarter command detector?
 
-## To do list (5)
+## To do list (5) DONE
 
 1. Make a command history (up/down)
 2. Make a short cut to delete a whole word back. (ctrl + w)
