@@ -2,11 +2,6 @@
 #include "history.h"
 #include <string.h>
 
-// Ring buffer: entries[head] is the oldest entry, and there are
-// `count` entries in use going forward from there (wrapping around).
-// Once count hits HISTORY_MAX, pushing a new entry overwrites the
-// oldest one and advances head - so the shell never runs out of room,
-// it just forgets the far past.
 static char entries[HISTORY_MAX][HISTORY_LINE];
 static int  count = 0;
 static int  head  = 0;

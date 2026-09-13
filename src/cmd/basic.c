@@ -37,4 +37,17 @@ void cmd_date(int argc, char *argv[]) {
     printf("\nToday is: %s, ", days[info->tm_wday]);
     printf("%02d/%02d/%d, ", day, month, year);
     printf("%02d:%02d:%02d\n\n", hour, minute, second);
+}
+
+// clear
+void cmd_clear(int argc, char *argv[]) {
+    (void)argc;
+    (void)argv;
+
+    // \x1b[H  -> home the cursor
+    // \x1b[2J -> clear the visible screen
+    // \x1b[3J -> clear the scrollback too (xterm-style), so nothing
+    //            resurfaces when the user scrolls up afterward
+    printf("\x1b[H\x1b[2J\x1b[3J");
+    fflush(stdout);
 }

@@ -12,6 +12,7 @@
 // Basic command.
 void cmd_echo(int argc, char *argv[]);
 void cmd_date(int argc, char *argv[]);
+void cmd_clear(int argc, char *argv[]);
 
 // File and directory.
 void cmd_cd(int argc, char *argv[]);

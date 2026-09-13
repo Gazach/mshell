@@ -9,10 +9,6 @@
 #include "history.h"
 #include "cmd/command.h"
 
-// Ctrl+<letter> arrives as AsciiChar already reduced to its control code
-// (same trick backspace relies on below: '\b' IS Ctrl+H, 0x08) - masking
-// off the low 5 bits of the letter reproduces that code so we can name
-// the shortcut by its letter instead of a magic number.
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 int  isRunning = 1; // Flag to check shell running.
@@ -45,6 +41,10 @@ void runcmd(char *input) {
 
         printf("Exit...\n");
         isRunning = 0;
+
+    } else if (strcmp(argv[0], "clear") == 0 || strcmp(argv[0], "clr") == 0) {
+
+        cmd_clear(argc, argv);
 
     //File/dir Commands
 
@@ -234,6 +234,16 @@ void runPrompt(void){
                 redrawWholeLine(input, len, cursor);
             }
             continue;
+
+        } else if (vk == 'C' &&
+                   (ir.Event.KeyEvent.dwControlKeyState & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED))) {
+            if (len > 0) {
+                len = 0;
+                cursor = 0;
+                input[0] = '\0';
+                redrawWholeLine(input, len, cursor);
+            }
+            continue;
         }
 
         if (c == 0) continue; // other non-character keys (shift, ctrl, alt...)
@@ -278,6 +288,20 @@ void runPrompt(void){
                     input[len] = '\0';
                     redrawWholeLine(input, len, cursor);
                 }
+            }
+        } else if (c == CTRL_KEY('u')) { // kill from the cursor to the start of the line
+            if (cursor > 0) {
+                memmove(&input[0], &input[cursor], len - cursor);
+                len -= cursor;
+                cursor = 0;
+                input[len] = '\0';
+                redrawWholeLine(input, len, cursor);
+            }
+        } else if (c == CTRL_KEY('k')) { // kill from the cursor to the end of the line
+            if (cursor < len) {
+                len = cursor;
+                input[len] = '\0';
+                redrawWholeLine(input, len, cursor);
             }
         } else if (len < sizeof(input) - 1){
             size_t n = repeat;
