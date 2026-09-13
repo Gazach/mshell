@@ -14,3 +14,11 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_executable(mshell ${SOURCES})
+
+# build.bat creates build/<mode>/bin/, so put the exe there too. Without
+# this, Ninja drops mshell.exe one level up in build/<mode>/ instead - easy
+# to miss, and easy to end up repeatedly running a stale exe left in bin/
+# from an earlier build while thinking you rebuilt.
+set_target_properties(mshell PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)

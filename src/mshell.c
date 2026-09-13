@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 
@@ -10,6 +11,15 @@
 int  isRunning = 1; // Flag to check shell running.
 
 void runcmd(char *input) {
+    // tokenize() overwrites the spaces in `input` with '\0' to carve out
+    // argv[] in place, so by the time we might want to show the user what
+    // they actually typed, that information is gone from `input` itself.
+    // Snapshot it first so "Unknown Command!" can be unambiguous about
+    // what was parsed as the command vs. what was parsed as arguments.
+    char original[1024];
+    strncpy(original, input, sizeof(original) - 1);
+    original[sizeof(original) - 1] = '\0';
+
     char *argv[MAX_ARGS];
     int argc = tokenize(input, argv);
 
@@ -74,6 +84,14 @@ void runcmd(char *input) {
     // if command not found.
     } else {
         printf("Unknown Command! : %s\n", argv[0]);
+        if (argc > 1) {
+            // There's more than one token, meaning tokenize() split on a
+            // space somewhere. Show the full original line too, so it's
+            // obvious the rest wasn't lost - it was parsed as arguments
+            // to a command named argv[0].
+            printf("  (parsed as command \"%s\" + %d argument%s - full line was: %s)\n",
+                   argv[0], argc - 1, (argc - 1 == 1) ? "" : "s", original);
+        }
     }
 
 }
@@ -101,6 +119,22 @@ void printPrompt(void) {
     fflush(stdout);
 }
 
+// Redraws the whole prompt + input line from scratch, starting at column 0.
+// Unlike redrawTail() (which only patches the delta since the last edit,
+// assuming the terminal cursor is already exactly where we think it is),
+// this is "self-healing": it never trusts the previous on-screen position,
+// so it's what we reach for whenever that trust is broken - e.g. right
+// after the console has been resized underneath us.
+static void redrawWholeLine(const char *input, size_t len, size_t cursor) {
+    printf("\r\x1b[2K"); // \x1b[2K = erase the ENTIRE line, not just cursor-to-end
+    printPrompt();
+    if (len) printf("%.*s", (int)len, input); // print exactly len bytes - never
+                                               // trust a NUL terminator to be in
+                                               // the right place
+    if (cursor < len) printf("\x1b[%zuD", len - cursor);
+    fflush(stdout);
+}
+
 void runPrompt(void){
     enableRawMode();
 
@@ -109,7 +143,8 @@ void runPrompt(void){
     HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
 
     char input[1024]; // User Type input
-    size_t len = 0;
+    size_t len = 0;    // bytes currently in the buffer
+    size_t cursor = 0; // where in the buffer the terminal cursor sits
 
     printPrompt();
 
@@ -117,32 +152,119 @@ void runPrompt(void){
     DWORD read;
 
     while (isRunning && ReadConsoleInputA(hStdin, &ir, 1, &read)){
-        // ignore key up event
+        if (ir.EventType == WINDOW_BUFFER_SIZE_EVENT) {
+            // Just re-anchor the current line; there's no custom buffer
+            // geometry to resync anymore since we write straight to the
+            // one real console buffer, which the terminal itself resizes.
+            redrawWholeLine(input, len, cursor);
+            continue;
+        }
+
         if (ir.EventType != KEY_EVENT || !ir.Event.KeyEvent.bKeyDown){continue;}
 
+        WORD vk = ir.Event.KeyEvent.wVirtualKeyCode;
         char c = ir.Event.KeyEvent.uChar.AsciiChar;
-        if (c == 0) continue;
+
+        // Windows can report a held/auto-repeating key as a single event
+        // with wRepeatCount set to however many times it "really" fired,
+        // instead of one event per repeat. Previously we ignored this and
+        // always applied the operation exactly once per event, so fast or
+        // held key presses could end up applying fewer times than the key
+        // actually registered.
+        WORD repeat = ir.Event.KeyEvent.wRepeatCount;
+        if (repeat < 1) repeat = 1;
+
+        if (vk == VK_LEFT) {
+            if (cursor > 0) {
+                size_t n = repeat;
+                if (n > cursor) n = cursor;
+                cursor -= n;
+                redrawWholeLine(input, len, cursor);
+            }
+            continue;
+
+        } else if (vk == VK_RIGHT) {
+            if (cursor < len) {
+                size_t n = repeat;
+                size_t avail = len - cursor;
+                if (n > avail) n = avail;
+                cursor += n;
+                redrawWholeLine(input, len, cursor);
+            }
+            continue;
+
+        } else if (vk == VK_HOME) {
+            if (cursor > 0) {
+                cursor = 0;
+                redrawWholeLine(input, len, cursor);
+            }
+            continue;
+
+        } else if (vk == VK_END) {
+            if (cursor < len) {
+                cursor = len;
+                redrawWholeLine(input, len, cursor);
+            }
+            continue;
+
+        } else if (vk == VK_DELETE) {
+            if (cursor < len) {
+                size_t n = repeat;
+                size_t avail = len - cursor;
+                if (n > avail) n = avail;
+                memmove(&input[cursor], &input[cursor + n], len - cursor - n);
+                len -= n;
+                input[len] = '\0';
+                redrawWholeLine(input, len, cursor);
+            }
+            continue;
+        }
+
+        if (c == 0) continue; // other non-character keys (shift, ctrl, alt...)
 
         if (c == '\r'){  //enter
             input[len] = '\0';
-            printf("\n");
+            printf("\r\n"); // \r first: guarantee the new row starts at column 0
+                             // even if the cursor had drifted off its expected spot
             runcmd(input);
 
             if (!isRunning) break;
 
             len = 0;
+            cursor = 0;
+            // Erase cursor-to-end-of-SCREEN (not just end-of-line) before
+            // printing the new prompt. This is a defensive measure against
+            // an apparent Windows Terminal rendering bug where rows being
+            // reused as they scroll into history can retain stale glyphs
+            // from whatever was drawn there before, even though our program
+            // never wrote that content to this row.
+            printf("\x1b[J");
             printPrompt();
 
         } else if ( c == '\b') {  //backspace
-            if (len > 0){
-                len--;
-                printf("\b \b");
-                fflush(stdout);
+            if (cursor > 0){
+                size_t n = repeat;
+                if (n > cursor) n = cursor;
+                memmove(&input[cursor - n], &input[cursor], len - cursor);
+                len -= n;
+                cursor -= n;
+                input[len] = '\0';
+                redrawWholeLine(input, len, cursor);
             }
         } else if (len < sizeof(input) - 1){
-            input[len++] = c;
-            putchar(c);
-            fflush(stdout);
+            size_t n = repeat;
+            size_t roomLeft = sizeof(input) - 1 - len;
+            if (n > roomLeft) n = roomLeft;
+            if (n > 0) {
+                memmove(&input[cursor + n], &input[cursor], len - cursor);
+                memset(&input[cursor], c, n);
+                len += n;
+                cursor += n;
+                input[len] = '\0'; // insert never terminated the string here before -
+                                   // printf("%s", ...) would walk past real content
+                                   // into whatever bytes the previous command left behind
+                redrawWholeLine(input, len, cursor);
+            }
         }
     }
 }
