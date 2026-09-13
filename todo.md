@@ -1,10 +1,11 @@
 ## To do list (6)
 
 1. Make a interactive help command. which sort every command by category (help)
+2. kinda smarter command detector?
 
 ## To do list (5)
 
-1. Make a command history (ctrl + up/down)
+1. Make a command history (up/down)
 2. Make a short cut to delete a whole word back. (ctrl + w)
 3. Make a short cut to clear a whole line (alr + c)
 4. Make a short cut to kill to start-of-line / kill to end-of-line. (ctrl + u)
