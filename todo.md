@@ -1,9 +1,21 @@
-## To do list (4)
+## To do list (6)
+
+1. Make a interactive help command. which sort every command by category (help)
+
+## To do list (5)
+
+1. Make a command history (ctrl + up/down)
+2. Make a short cut to delete a whole word back. (ctrl + w)
+3. Make a short cut to clear a whole line (alr + c)
+4. Make a short cut to kill to start-of-line / kill to end-of-line. (ctrl + u)
+5. Make a clear terminal command (clear/clr)
+
+## To do list (4) DONE
 
 1. make a moveable cursor.
-2. make a command history.
+2. make a command history. (move to 5)
 
-## To do list (3)
+## To do list (3) DONE
 
 1. Make basic feature :
 - blank (make a new blank file)
@@ -14,7 +26,7 @@
 - mv (move / rename file)
 - cp (copy file)
  
-## To do list (2)
+## To do list (2) DONE
 
 1. Make a Directory Label.
 2. Make a "CD" command.
@@ -22,7 +34,7 @@
 4. make a "touch" command to make a file. (Moved, to list 3)
 4. make a "ls" command to list file and folder.
 
-## To do list (1)
+## To do list (1) DONE
 
 1. Make a loop for terminal
 2. Make terminal raw mode and disable it if its not use.
