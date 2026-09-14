@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 #define MAJOR 0
-#define MINOR 1
-#define PATCH 9
+#define MINOR 2
+#define PATCH 0
 
 #define PrintVer() printf("Moon Shell v%d.%d.%d\nby Gazach\n\n", MAJOR, MINOR, PATCH)
 

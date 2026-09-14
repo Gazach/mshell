@@ -10,12 +10,6 @@ static int min3(int a, int b, int c) {
     return m;
 }
 
-// Levenshtein edit distance, extended with one extra rule (this makes
-// it "Optimal String Alignment" distance): swapping two adjacent
-// letters counts as a single edit instead of two substitutions. That
-// swap is one of the most common real typing mistakes (sl/ls, pdc/pcd),
-// so without this rule those exact cases would score too far away to
-// suggest anything.
 static int editDistance(const char *a, const char *b) {
     size_t la = strlen(a);
     size_t lb = strlen(b);

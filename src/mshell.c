@@ -8,6 +8,7 @@
 #include "tokenize.h"
 #include "history.h"
 #include "suggest.h"
+#include "exec.h"
 #include "cmd/command.h"
 
 // Ctrl+<letter> arrives as AsciiChar already reduced to its control code
@@ -95,15 +96,22 @@ void runcmd(char *input) {
 
     // if command not found.
     } else {
-        printf("Unknown Command! : %s\n", argv[0]);
-        if (argc > 1) {
-            printf("  (parsed as command \"%s\" + %d argument%s - full line was: %s)\n",
-                   argv[0], argc - 1, (argc - 1 == 1) ? "" : "s", original);
-        }
+        char resolvedPath[MAX_PATH];
+        if (execFindOnPath(argv[0], resolvedPath, sizeof(resolvedPath))) {
 
-        char suggestion[SUGGEST_MAX_LEN + 1];
-        if (suggestCommand(argv[0], suggestion, sizeof(suggestion))) {
-            printf("  Did you mean \"%s\"?\n", suggestion);
+            execRun(resolvedPath, original);
+
+        } else {
+            printf("Unknown Command! : %s\n", argv[0]);
+            if (argc > 1) {
+                printf("  (parsed as command \"%s\" + %d argument%s - full line was: %s)\n",
+                       argv[0], argc - 1, (argc - 1 == 1) ? "" : "s", original);
+            }
+
+            char suggestion[SUGGEST_MAX_LEN + 1];
+            if (suggestCommand(argv[0], suggestion, sizeof(suggestion))) {
+                printf("  Did you mean \"%s\"?\n", suggestion);
+            }
         }
     }
 

@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Minimal line reader for the help menu's own prompts. The shell puts
+// the console in raw mode for its whole lifetime (see mode.c), so
+// there's no OS-level echo or line editing here either - this only
+// needs to handle typed characters, backspace, and Enter, which is
+// plenty for picking a menu number. Returns the line length, or -1 if
+// the user backed out (Esc / Ctrl+C) or the input stream closed.
 static int readMenuLine(char *buf, size_t bufSize) {
     HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
     size_t len = 0;
@@ -47,7 +53,7 @@ static int isQuit(const char *s) {
 }
 
 static void printCategoryMenu(const char *const categories[], size_t count) {
-    printf("\n=== Moon Shell Help ===\n");
+    printf("\n=== MShell Help ===\n");
     printf("Pick a category:\n\n");
     for (size_t i = 0; i < count; i++) {
         printf("  %d) %s\n", (int)i + 1, categories[i]);
